@@ -92,22 +92,17 @@ const timesQuery = `
 
 query {
 
-cartBookableTimes(
-
-input:{
-cartId:"${cartId}"
-}
-
+cart(
+id:"${cartId}"
 ){
 
-times
+cartBookableTimes
 
 }
 
 }
 
 `;
-
 
 
 const timesResponse = await fetch(
