@@ -1,66 +1,66 @@
 export default async function handler(req,res){
-   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
+res.setHeader("Access-Control-Allow-Origin","*");
+res.setHeader("Access-Control-Allow-Methods","GET, OPTIONS");
+
+if(req.method==="OPTIONS"){
+return res.status(200).end();
+}
+
 
 const BUSINESS_ID =
 "4a7bb2cd-2bfc-4bf9-aa0b-0fa508cc287b";
 
 
-const query = `
-mutation {
-
- createCart(
-   input:{
-     locationId:"urn:blvd:Location:67044558-0bab-4c70-adc8-d7d627da6525"
-   }
- ){
-
-  cart {
-
-   id
-
-   location {
-     id
-     name
-   }
-
-   availableCategories {
-
-    name
-
-    availableItems {
-
-     id
-     name
-
-    }
-
-   }
-
-  }
-
- }
-
-}
-`;
-
 const credentials =
 Buffer
-.from(
-process.env.BOULEVARD_API_KEY + ":"
-)
+.from(process.env.BOULEVARD_API_KEY+":")
 .toString("base64");
 
 
-const response =
-await fetch(
+// CREATE CART
+
+const createCartQuery = `
+
+mutation {
+
+createCart(
+input:{
+locationId:"urn:blvd:Location:67044558-0bab-4c70-adc8-d7d627da6525"
+}
+){
+
+cart{
+
+id
+
+availableCategories{
+
+name
+
+availableItems{
+id
+name
+}
+
+}
+
+}
+
+}
+
+}
+
+`;
+
+
+
+const cartResponse = await fetch(
+
 `https://sandbox.joinblvd.com/api/2020-01/${BUSINESS_ID}/client`,
+
 {
+
 method:"POST",
 
 headers:{
@@ -70,16 +70,86 @@ headers:{
 },
 
 body:JSON.stringify({
-query
+query:createCartQuery
 })
+
+}
+
+);
+
+
+const cartData = await cartResponse.json();
+
+
+const cartId =
+cartData.data.createCart.cart.id;
+
+
+// GET AVAILABLE TIMES
+
+
+const timesQuery = `
+
+query {
+
+cartBookableTimes(
+
+input:{
+cartId:"${cartId}"
+}
+
+){
+
+times
+
+}
+
+}
+
+`;
+
+
+
+const timesResponse = await fetch(
+
+`https://sandbox.joinblvd.com/api/2020-01/${BUSINESS_ID}/client`,
+
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+"Authorization":
+`Basic ${credentials}`
+},
+
+body:JSON.stringify({
+query:timesQuery
+})
+
+}
+
+);
+
+
+
+const timesData =
+await timesResponse.json();
+
+
+
+res.status(200).json({
+
+cartId,
+
+categories:
+cartData.data.createCart.cart.availableCategories,
+
+times:
+timesData
 
 });
 
-
-const data =
-await response.json();
-
-
-res.status(200).json(data);
 
 }
