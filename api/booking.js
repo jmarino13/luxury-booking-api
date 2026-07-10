@@ -96,14 +96,19 @@ cart(
 id:"${cartId}"
 ){
 
-cartBookableTimes
+cartBookableTimes{
+
+id
+
+startTime
+
+}
 
 }
 
 }
 
 `;
-
 
 const timesResponse = await fetch(
 
@@ -142,7 +147,7 @@ categories:
 cartData.data.createCart.cart.availableCategories,
 
 times:
-timesData
+timesData.data.cart.cartBookableTimes
 
 });
 
