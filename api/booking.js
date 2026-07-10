@@ -98,7 +98,7 @@ const timesQuery = `
 query {
 
 cartBookableTimes(
-  id:"${serviceId}"
+  id:"${cartId}"
   locationId:"urn:blvd:Location:67044558-0bab-4c70-adc8-d7d627da6525"
   searchDate:"${today}"
   tz:"America/Chicago"
