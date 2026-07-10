@@ -143,11 +143,9 @@ res.status(200).json({
 
 cartId,
 
-categories:
-cartData.data.createCart.cart.availableCategories,
+cartResponse: cartData,
 
-times:
-timesData.data.cart.cartBookableTimes
+timesResponse: timesData
 
 });
 
