@@ -83,33 +83,30 @@ const cartData = await cartResponse.json();
 
 const cartId =
 cartData.data.createCart.cart.id;
-
+const serviceId =
+cartData.data.createCart.cart.availableCategories[0]
+.availableItems[0]
+.id;
 
 // GET AVAILABLE TIMES
 
 
 const timesQuery = `
-
 query {
 
-cart(
-id:"${cartId}"
+cartBookableTimes(
+  id:"${serviceId}"
+  locationId:"urn:blvd:Location:67044558-0bab-4c70-adc8-d7d627da6525"
+  tz:"America/Chicago"
 ){
 
-cartBookableTimes{
-
 id
-
 startTime
 
 }
 
 }
-
-}
-
 `;
-
 const timesResponse = await fetch(
 
 `https://sandbox.joinblvd.com/api/2020-01/${BUSINESS_ID}/client`,
@@ -143,11 +140,14 @@ res.status(200).json({
 
 cartId,
 
-cartResponse: cartData,
+serviceId,
 
-timesResponse: timesData
+categories:
+cartData.data.createCart.cart.availableCategories,
+
+times:
+timesData
 
 });
-
 
 }
