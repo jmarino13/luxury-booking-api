@@ -91,12 +91,16 @@ cartData.data.createCart.cart.availableCategories[0]
 // GET AVAILABLE TIMES
 
 
+const today = new Date().toISOString().split("T")[0];
+
+
 const timesQuery = `
 query {
 
 cartBookableTimes(
   id:"${serviceId}"
   locationId:"urn:blvd:Location:67044558-0bab-4c70-adc8-d7d627da6525"
+  searchDate:"${today}"
   tz:"America/Chicago"
 ){
 
