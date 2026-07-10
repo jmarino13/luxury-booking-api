@@ -7,11 +7,20 @@ const BUSINESS_ID =
 const query = `
 mutation {
 
- createCart {
+ createCart(
+   input:{
+     locationId:"urn:blvd:Location:67044558-0bab-4c70-adc8-d7d627da6525"
+   }
+ ){
 
   cart {
 
    id
+
+   location {
+     id
+     name
+   }
 
    availableCategories {
 
@@ -32,7 +41,6 @@ mutation {
 
 }
 `;
-
 
 const credentials =
 Buffer
