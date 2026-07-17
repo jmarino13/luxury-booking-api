@@ -1,38 +1,34 @@
 export default async function handler(req,res){
 
-const BUSINESS_ID =
-"4a7bb2cd-2bfc-4bf9-aa0b-0fa508cc287b";
+const credentials =
+Buffer
+.from(
+process.env.BOULEVARD_API_KEY + ":"
+)
+.toString("base64");
 
 
 const query = `
 query {
-  __schema {
-    queryType {
-      fields {
-        name
-      }
-    }
-  }
+ business {
+   id
+   name
+ }
 }
 `;
 
 
-const credentials =
-Buffer
-.from(process.env.BOULEVARD_API_KEY+":")
-.toString("base64");
-
-
 const response = await fetch(
-`https://sandbox.joinblvd.com/api/2020-01/${BUSINESS_ID}/client`,
+"https://api.joinblvd.com/api/2020-01/graphql",
 {
 method:"POST",
 headers:{
 "Content-Type":"application/json",
-"Authorization":
-`Basic ${credentials}`
+"Authorization":`Basic ${credentials}`
 },
-body:JSON.stringify({query})
+body:JSON.stringify({
+query
+})
 });
 
 
