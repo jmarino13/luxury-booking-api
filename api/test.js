@@ -1,19 +1,28 @@
 export default async function handler(req,res){
 
+try {
+
+const apiKey = process.env.BOULEVARD_API_KEY;
+
+if (!apiKey) {
+  return res.status(500).json({
+    error:"Missing BOULEVARD_API_KEY"
+  });
+}
+
+
 const credentials =
 Buffer
-.from(
-process.env.BOULEVARD_API_KEY + ":"
-)
+.from(apiKey + ":")
 .toString("base64");
 
 
 const query = `
 query {
- business {
-   id
-   name
- }
+  business {
+    id
+    name
+  }
 }
 `;
 
@@ -34,6 +43,16 @@ query
 
 const data = await response.json();
 
-res.status(200).json(data);
+
+return res.status(200).json(data);
+
+
+} catch(error){
+
+return res.status(500).json({
+error:error.message
+});
+
+}
 
 }
