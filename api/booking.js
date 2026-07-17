@@ -57,7 +57,7 @@ name
 
 const cartResponse = await fetch(
 
-`https://sandbox.joinblvd.com/api/2020-01/${BUSINESS_ID}/client`,
+https://api.joinblvd.com/api/2020-01/${BUSINESS_ID}/client
 
 {
 
