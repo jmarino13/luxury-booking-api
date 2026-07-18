@@ -11,10 +11,17 @@ const credentials = Buffer
 
 const query = `
 query {
-  business {
-    services {
-      id
+  __type(name:"LocationConnection") {
+    fields {
       name
+      type {
+        kind
+        name
+        ofType {
+          kind
+          name
+        }
+      }
     }
   }
 }
