@@ -21,7 +21,7 @@ export default async function handler(req, res) {
 
 
     const response = await fetch(
-      "https://dashboard.boulevard.io/api/2020-01/graphql",
+    "https://api.joinblvd.com/api/2020-01/graphql"
       {
         method: "POST",
         headers: {
