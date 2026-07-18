@@ -12,7 +12,7 @@ const credentials = Buffer
 const query = `
 query {
   business {
-    locations {
+    services {
       id
       name
     }
