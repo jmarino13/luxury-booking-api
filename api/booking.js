@@ -235,7 +235,7 @@ return res.status(200).json({
   selectedDate,
   availableDates,
   availableTimes:
-    timesData?.data?.cartBookableTimes || null,
+    timesData?.data?.cartBookableTimes || [],
   boulevardErrors:
     timesData?.errors || null
 });
