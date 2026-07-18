@@ -16,7 +16,7 @@ mutation {
 
 
 const response = await fetch(
-"https://www.joinblvd.com/.api/graph",
+"https://api.joinblvd.com/graphql",
 {
 method:"POST",
 headers: {
