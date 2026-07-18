@@ -25,7 +25,7 @@ export default async function handler(req, res) {
     const query = `
       mutation {
         createCart(
-          locationId: "c4d9bb0-b959-4898-8444-23d32a1f994e"
+         locationId: "c4d09bb0-b959-4898-8444-23d32a1f994e"
           cart: {
             clientMessage: "Luxury Medical Group online booking"
           }
