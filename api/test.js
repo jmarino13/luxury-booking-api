@@ -12,19 +12,14 @@ const credentials = Buffer
 const query = `
 query {
   business(id:"3a83c246-a294-4eee-9a1a-a960ade6528a") {
-    locations(first:10) {
+    cartBookableItems(
+      locationId:"c4d9bb0-b959-4898-8444-23d32a1f994e"
+      first:50
+    ) {
       edges {
         node {
           id
           name
-          bookableItems(first:50) {
-            edges {
-              node {
-                id
-                name
-              }
-            }
-          }
         }
       }
     }
