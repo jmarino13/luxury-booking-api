@@ -11,16 +11,9 @@ const credentials = Buffer
 
 const query = `
 query {
-  __type(name:"Mutation") {
-    fields {
+  __schema {
+    mutationType {
       name
-      args {
-        name
-        type {
-          name
-          kind
-        }
-      }
     }
   }
 }
