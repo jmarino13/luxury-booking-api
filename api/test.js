@@ -29,8 +29,9 @@ const response = await fetch(
 method:"POST",
 headers:{
 "Content-Type":"application/json",
-"Authorization":`Basic ${credentials}`
-},
+"Authorization":`Basic ${credentials}`,
+"x-blvd-bid":"3a83c246-a294-4eee-9a1a-a960ade6528a"
+}
 body:JSON.stringify({
 query
 })
