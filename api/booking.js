@@ -83,9 +83,9 @@ const cartQuery = `
       headers,
       body: JSON.stringify({
         query: cartQuery,
-        variables: {
-          id: cartToken,
-        },
+     variables: {
+  idOrToken: cartToken,
+},
       }),
     });
 
