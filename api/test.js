@@ -16,16 +16,18 @@ mutation {
 
 
 const response = await fetch(
-"https://api.joinblvd.com/graphql",
+"https://www.joinblvd.com/.api/graphql",
 {
 method:"POST",
 headers: {
   "Content-Type": "application/json",
-"Authorization": `Basic ${Buffer.from(process.env.BOULEVARD_API_KEY + ":").toString("base64")}`,
+  "Authorization": `Basic ${Buffer.from(
+    process.env.BOULEVARD_API_KEY + ":"
+  ).toString("base64")}`,
   "x-blvd-bid": process.env.BOULEVARD_BUSINESS_ID
 },
-body:JSON.stringify({
-query
+body: JSON.stringify({
+  query
 })
 });
 
