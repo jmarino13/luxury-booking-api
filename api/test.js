@@ -21,7 +21,7 @@ const response = await fetch(
 method:"POST",
 headers: {
   "Content-Type": "application/json",
-  "Authorization": `Bearer ${process.env.BOULEVARD_API_KEY}`,
+"Authorization": `Basic ${Buffer.from(process.env.BOULEVARD_API_KEY + ":").toString("base64")}`,
   "x-blvd-bid": process.env.BOULEVARD_BUSINESS_ID
 },
 body:JSON.stringify({
