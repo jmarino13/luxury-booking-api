@@ -171,15 +171,68 @@ const datesResponse = await fetch(endpoint, {
 
 const datesData = await datesResponse.json();
 
+const availableDates =
+  datesData?.data?.cartBookableDates || [];
+
+const selectedDate =
+  availableDates?.[0]?.date;
+
+if (!selectedDate) {
+  return res.status(200).json({
+    cartToken,
+    serviceId,
+    serviceAdded:
+      !!addServiceData?.data?.cartAddSelectedBookableItem,
+    availableDates: [],
+    availableTimes: [],
+    message: "No appointment dates are currently available."
+  });
+}
+
+// STEP 5: Retrieve available times for the first available date.
+const timesQuery = `
+  query GetAvailableTimes(
+    $idOrToken: ID!
+    $searchDate: Date!
+    $tz: Tz
+  ) {
+    cartBookableTimes(
+      idOrToken: $idOrToken
+      searchDate: $searchDate
+      tz: $tz
+    ) {
+      id
+      startTime
+    }
+  }
+`;
+
+const timesResponse = await fetch(endpoint, {
+  method: "POST",
+  headers,
+  body: JSON.stringify({
+    query: timesQuery,
+    variables: {
+      idOrToken: cartToken,
+      searchDate: selectedDate,
+      tz: "America/Denver"
+    }
+  })
+});
+
+const timesData = await timesResponse.json();
+
 return res.status(200).json({
   cartToken,
   serviceId,
   serviceAdded:
     !!addServiceData?.data?.cartAddSelectedBookableItem,
-  availableDates:
-    datesData?.data?.cartBookableDates || null,
+  selectedDate,
+  availableDates,
+  availableTimes:
+    timesData?.data?.cartBookableTimes || null,
   boulevardErrors:
-    datesData?.errors || null
+    timesData?.errors || null
 });
   } catch (error) {
     return res.status(500).json({
