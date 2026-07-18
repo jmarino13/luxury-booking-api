@@ -5,7 +5,8 @@ return res.status(200).end();
 }
 
 const BUSINESS_ID = process.env.BOULEVARD_BUSINESS_ID;
-
+console.log("BUSINESS ID:", BUSINESS_ID);
+console.log("API KEY EXISTS:", !!process.env.BOULEVARD_API_KEY);
 const credentials =
 Buffer
 .from(process.env.BOULEVARD_API_KEY + ":")
@@ -32,8 +33,12 @@ mutation {
 `;
 
 
+const url = `https://api.joinblvd.com/api/2020-01/${BUSINESS_ID}/client`;
+
+console.log("BOULEVARD URL:", url);
+
 const response = await fetch(
-`https://api.joinblvd.com/api/2020-01/${BUSINESS_ID}/client`,
+url,
 {
 method:"POST",
 headers:{
@@ -46,9 +51,10 @@ query
 });
 
 
-const data = await response.json();
+const text = await response.text();
 
-
-return res.status(200).json(data);
-
+return res.status(200).json({
+status: response.status,
+body: text
+});
 }
