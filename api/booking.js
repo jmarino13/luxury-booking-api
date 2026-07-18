@@ -100,11 +100,8 @@ if (!serviceId) {
 
 // STEP 3: Add the selected service to the cart.
 const addServiceQuery = `
-  mutation AddService($idOrToken: ID!, $itemId: ID!) {
-    cartAddSelectedBookableItem(
-      idOrToken: $idOrToken
-      itemId: $itemId
-    ) {
+  mutation AddService($input: CartAddSelectedBookableItemInput!) {
+    cartAddSelectedBookableItem(input: $input) {
       cart {
         id
       }
@@ -118,8 +115,10 @@ const addServiceResponse = await fetch(endpoint, {
   body: JSON.stringify({
     query: addServiceQuery,
     variables: {
-      idOrToken: cartToken,
-      itemId: serviceId
+      input: {
+        idOrToken: cartToken,
+        itemId: serviceId
+      }
     }
   })
 });
@@ -131,11 +130,6 @@ return res.status(200).json({
   serviceId,
   cart: cartData?.data?.cart || null,
   addService: addServiceData
-});
-return res.status(200).json({
-  cartToken,
-  cart: cartData?.data?.cart || null,
-  boulevardErrors: cartData?.errors || null
 });
   } catch (error) {
     return res.status(500).json({
