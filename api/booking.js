@@ -88,7 +88,50 @@ const cartResponse = await fetch(endpoint, {
 });
 
 const cartData = await cartResponse.json();
+const serviceId =
+  cartData?.data?.cart?.availableCategories?.[0]?.availableItems?.[0]?.id;
 
+if (!serviceId) {
+  return res.status(500).json({
+    error: "No Boulevard service was found",
+    cartData
+  });
+}
+
+// STEP 3: Add the selected service to the cart.
+const addServiceQuery = `
+  mutation AddService($idOrToken: ID!, $itemId: ID!) {
+    cartAddSelectedBookableItem(
+      idOrToken: $idOrToken
+      itemId: $itemId
+    ) {
+      cart {
+        id
+      }
+    }
+  }
+`;
+
+const addServiceResponse = await fetch(endpoint, {
+  method: "POST",
+  headers,
+  body: JSON.stringify({
+    query: addServiceQuery,
+    variables: {
+      idOrToken: cartToken,
+      itemId: serviceId
+    }
+  })
+});
+
+const addServiceData = await addServiceResponse.json();
+
+return res.status(200).json({
+  cartToken,
+  serviceId,
+  cart: cartData?.data?.cart || null,
+  addService: addServiceData
+});
 return res.status(200).json({
   cartToken,
   cart: cartData?.data?.cart || null,
