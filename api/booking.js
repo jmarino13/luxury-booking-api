@@ -60,15 +60,13 @@ export default async function handler(req, res) {
       });
     }
 
-    // STEP 2: Use the token to retrieve available services.
+ // STEP 2: Retrieve the cart and available services.
 const cartQuery = `
   query GetCart($idOrToken: ID!) {
     cart(idOrToken: $idOrToken) {
       id
-
       availableCategories {
         name
-
         availableItems {
           id
           name
@@ -78,24 +76,24 @@ const cartQuery = `
   }
 `;
 
-    const cartResponse = await fetch(endpoint, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        query: cartQuery,
-     variables: {
-  idOrToken: cartToken,
-},
-      }),
-    });
+const cartResponse = await fetch(endpoint, {
+  method: "POST",
+  headers,
+  body: JSON.stringify({
+    query: cartQuery,
+    variables: {
+      idOrToken: cartToken
+    }
+  })
+});
 
-    const cartData = await cartResponse.json();
+const cartData = await cartResponse.json();
 
-    return res.status(200).json({
-      cartToken,
-      cart: cartData?.data?.cart || null,
-      boulevardErrors: cartData?.errors || null,
-    });
+return res.status(200).json({
+  cartToken,
+  cart: cartData?.data?.cart || null,
+  boulevardErrors: cartData?.errors || null
+});
   } catch (error) {
     return res.status(500).json({
       error: error.message,
