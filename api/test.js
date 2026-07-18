@@ -11,15 +11,18 @@ const credentials = Buffer
 
 const query = `
 mutation {
-  createCart(input:{
+  createCart(
+    locationId:"c4d9bb0-b959-4898-8444-23d32a1f994e"
     clientInformation:{
       firstName:"Test"
       lastName:"User"
       email:"test@example.com"
       phoneNumber:"5555555555"
     }
-  }) {
-    id
+  ) {
+    cart {
+      id
+    }
   }
 }
 `;
