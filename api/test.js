@@ -1,25 +1,55 @@
-export default async function handler(req, res) {
+export default async function handler(req,res){
 
-  try {
+try {
 
-    const response = await fetch(
-      "https://www.joinblvd.com"
-    );
+const key = process.env.BOULEVARD_API_KEY;
 
-    const text = await response.text();
+const credentials =
+Buffer
+.from(key + ":")
+.toString("base64");
 
-    return res.status(200).json({
-      status: response.status,
-      response: text.substring(0,200)
-    });
 
-  } catch(error) {
+const query = `
+query {
+ business(id:"3a83c246-a294-4eee-9a1a-a960ade6528a") {
+   id
+   name
+ }
+}
+`;
 
-    return res.status(500).json({
-      error: error.message,
-      stack: error.stack
-    });
 
-  }
+const response = await fetch(
+"https://www.joinblvd.com/b/.api/graph",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":`Basic ${credentials}`
+},
+body:JSON.stringify({
+query
+})
+});
+
+
+const text = await response.text();
+
+
+return res.status(200).json({
+status:response.status,
+response:text
+});
+
+
+}catch(error){
+
+return res.status(500).json({
+error:error.message,
+stack:error.stack
+});
+
+}
 
 }
