@@ -10,11 +10,14 @@ const credentials = Buffer
 
 
 const query = `
-query {
-  __type(name:"CreateCartResult") {
-    fields {
-      name
+mutation {
+  createCart(
+    locationId: "c4d9bb0-b959-4898-8444-23d32a1f994e"
+    cart: {
+      clientMessage: "Luxury Medical Group booking test"
     }
+  ) {
+    idOrToken
   }
 }
 `;
