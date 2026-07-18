@@ -26,7 +26,7 @@ headers: {
   "Content-Type": "application/json",
   "Authorization": `Bearer ${process.env.BOULEVARD_API_KEY}`,
   "x-blvd-bid": process.env.BOULEVARD_BUSINESS_ID
-}
+},
 body:JSON.stringify({
 query
 })
