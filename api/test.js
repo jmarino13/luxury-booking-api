@@ -1,56 +1,62 @@
-export default async function handler(req, res) {
+export default async function handler(req,res){
 
-  try {
+try {
 
-    const credentials = Buffer
-      .from(process.env.BOULEVARD_API_KEY + ":")
-      .toString("base64");
+const key = process.env.BOULEVARD_API_KEY;
 
-
-    const query = `
-    query {
-      __schema {
-        queryType {
-          fields {
-            name
-          }
-        }
-      }
-    }
-    `;
+if(!key){
+  return res.status(500).json({
+    error:"Missing BOULEVARD_API_KEY"
+  });
+}
 
 
-    const response = await fetch(
-    "https://api.joinblvd.com/api/2020-01/graphql"
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Basic ${credentials}`
-        },
-        body: JSON.stringify({
-          query
-        })
-      }
-    );
+const credentials =
+Buffer
+.from(key + ":")
+.toString("base64");
 
 
-    const text = await response.text();
+const query = `
+query {
+ business {
+   id
+   name
+ }
+}
+`;
 
 
-    res.status(200).json({
-      status: response.status,
-      boulevardResponse: text
-    });
+const response = await fetch(
+"https://api.joinblvd.com/api/2020-01/graphql",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":`Basic ${credentials}`
+},
+body:JSON.stringify({
+query
+})
+});
 
 
-  } catch(error) {
+const text = await response.text();
 
-    res.status(500).json({
-      error: error.message,
-      stack: error.stack
-    });
 
-  }
+return res.status(200).json({
+status:response.status,
+response:text
+});
+
+
+}catch(error){
+
+return res.status(500).json({
+error:error.message,
+stack:error.stack
+});
+
+}
 
 }
