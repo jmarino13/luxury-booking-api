@@ -11,18 +11,31 @@ const credentials = Buffer
 
 const query = `
 query {
-  __type(name:"RootMutationType") {
-    fields {
+  createCart: __type(name:"CreateCartInput") {
+    name
+    inputFields {
       name
-      args {
+      type {
+        kind
         name
-        type {
+        ofType {
           kind
           name
-          ofType {
-            kind
-            name
-          }
+        }
+      }
+    }
+  }
+
+  addBookable: __type(name:"CartAddSelectedBookableItemInput") {
+    name
+    inputFields {
+      name
+      type {
+        kind
+        name
+        ofType {
+          kind
+          name
         }
       }
     }
