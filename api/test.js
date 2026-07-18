@@ -11,27 +11,22 @@ const credentials = Buffer
 
 const query = `
 mutation {
-  createCart(
-    locationId: "c4d9bb0-b959-4898-8444-23d32a1f994e"
-    cart: {
-      clientMessage: "Luxury Medical Group booking test"
-    }
-  ) {
-   cartToken
+  createCart {
+    cartToken
   }
 }
 `;
 
 
 const response = await fetch(
-"https://www.joinblvd.com/b/.api/graph",
+"https://www.joinblvd.com/.api/graph",
 {
 method:"POST",
 headers:{
 "Content-Type":"application/json",
 "Authorization":`Basic ${credentials}`,
 "x-blvd-bid":"3a83c246-a294-4eee-9a1a-a960ade6528a"
-}
+},
 body:JSON.stringify({
 query
 })
@@ -39,6 +34,7 @@ query
 
 
 const text = await response.text();
+
 
 return res.status(200).json({
 status:response.status,
