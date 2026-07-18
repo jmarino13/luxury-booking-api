@@ -11,7 +11,7 @@ const credentials = Buffer
 
 const query = `
 query {
-  __type(name:"Business") {
+  __type(name:"RootQueryType") {
     fields {
       name
     }
