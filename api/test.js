@@ -16,10 +16,6 @@ query {
         node {
           id
           name
-          address {
-            street
-            city
-          }
         }
       }
     }
