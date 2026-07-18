@@ -27,8 +27,12 @@ query {
 `;
 
 
+const BUSINESS_ID =
+"3a83c246-a294-4eee-9a1a-a960ade6528a";
+
+
 const response = await fetch(
-"https://api.joinblvd.com/api/2020-01/graphql",
+`https://dashboard.boulevard.io/api/2020-01/${BUSINESS_ID}/client`,
 {
 method:"POST",
 headers:{
