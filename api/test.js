@@ -11,11 +11,14 @@ const credentials = Buffer
 
 const query = `
 query {
-  business {
-    locations {
-      edges {
-        node {
-          id
+  __type(name:"LocationEdge") {
+    fields {
+      name
+      type {
+        kind
+        name
+        ofType {
+          kind
           name
         }
       }
