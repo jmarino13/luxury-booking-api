@@ -14,6 +14,13 @@ query {
   __type(name:"RootQueryType") {
     fields {
       name
+      args {
+        name
+        type {
+          name
+          kind
+        }
+      }
     }
   }
 }
