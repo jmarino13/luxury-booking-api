@@ -8,7 +8,7 @@ export default async function handler(req, res) {
 
   try {
     const apiKey = process.env.BOULEVARD_API_KEY?.trim();
-    const businessId = process.env.BOULEVARD_BUSINESS_ID?.trim();
+    const businessId = "3a83c246-a294-4eee-9a1a-a960ade6528a";
 
     if (!apiKey) {
       return res.status(500).json({
