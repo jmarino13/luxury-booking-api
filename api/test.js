@@ -4,9 +4,6 @@ try {
 
 const key = process.env.BOULEVARD_API_KEY;
 
-const credentials = Buffer
-.from(key + ":")
-.toString("base64");
 
 
 const query = `
