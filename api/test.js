@@ -17,7 +17,7 @@ mutation {
       clientMessage: "Luxury Medical Group booking test"
     }
   ) {
-    idOrToken
+   cartToken
   }
 }
 `;
