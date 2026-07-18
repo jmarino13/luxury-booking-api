@@ -3,6 +3,12 @@ export default async function handler(req, res) {
     const apiKey = process.env.BOULEVARD_API_KEY?.trim();
     const businessId = "3a83c246-a294-4eee-9a1a-a960ade6528a";
 
+    if (!apiKey) {
+      return res.status(200).json({
+        error: "BOULEVARD_API_KEY is missing"
+      });
+    }
+
     const query = `
       query {
         __type(name: "RootMutationType") {
@@ -30,28 +36,44 @@ export default async function handler(req, res) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: \`Bearer \${apiKey}\`,
-          "x-blvd-bid": businessId,
+          "Authorization": `Bearer ${apiKey}`,
+          "x-blvd-bid": businessId
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query })
       }
     );
 
-    const data = await response.json();
+    const text = await response.text();
+
+    let data;
+
+    try {
+      data = JSON.parse(text);
+    } catch {
+      return res.status(200).json({
+        status: response.status,
+        rawResponse: text
+      });
+    }
 
     const mutations =
       data?.data?.__type?.fields?.filter((field) =>
         [
           "reserveCartBookableItems",
           "checkoutCart",
-          "updateCart",
+          "updateCart"
         ].includes(field.name)
       ) || [];
 
-    return res.status(200).json({ mutations });
+    return res.status(200).json({
+      status: response.status,
+      mutations,
+      boulevardErrors: data?.errors || null
+    });
   } catch (error) {
-    return res.status(500).json({
+    return res.status(200).json({
       error: error.message,
+      stack: error.stack
     });
   }
 }
