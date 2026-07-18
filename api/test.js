@@ -11,7 +11,7 @@ const credentials = Buffer
 
 const query = `
 query {
-  __type(name:"LocationEdge") {
+  __type(name:"Location") {
     fields {
       name
       type {
