@@ -174,8 +174,13 @@ const datesData = await datesResponse.json();
 const availableDates =
   datesData?.data?.cartBookableDates || [];
 
+const requestedDate =
+  typeof req.query.date === "string"
+    ? req.query.date
+    : null;
+
 const selectedDate =
-  availableDates?.[0]?.date;
+  requestedDate || availableDates?.[0]?.date;
 
 if (!selectedDate) {
   return res.status(200).json({
