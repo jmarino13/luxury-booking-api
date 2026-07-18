@@ -125,11 +125,61 @@ const addServiceResponse = await fetch(endpoint, {
 
 const addServiceData = await addServiceResponse.json();
 
+// STEP 4: Retrieve available appointment dates.
+const today = new Date();
+const thirtyDaysLater = new Date();
+
+thirtyDaysLater.setDate(today.getDate() + 30);
+
+const startDate = today.toISOString().split("T")[0];
+const endDate = thirtyDaysLater.toISOString().split("T")[0];
+
+const datesQuery = `
+  query GetAvailableDates(
+    $idOrToken: ID!
+    $searchRangeLower: Date
+    $searchRangeUpper: Date
+    $limit: Int
+    $tz: Tz
+  ) {
+    cartBookableDates(
+      idOrToken: $idOrToken
+      searchRangeLower: $searchRangeLower
+      searchRangeUpper: $searchRangeUpper
+      limit: $limit
+      tz: $tz
+    ) {
+      date
+    }
+  }
+`;
+
+const datesResponse = await fetch(endpoint, {
+  method: "POST",
+  headers,
+  body: JSON.stringify({
+    query: datesQuery,
+    variables: {
+      idOrToken: cartToken,
+      searchRangeLower: startDate,
+      searchRangeUpper: endDate,
+      limit: 31,
+      tz: "America/Denver"
+    }
+  })
+});
+
+const datesData = await datesResponse.json();
+
 return res.status(200).json({
   cartToken,
   serviceId,
-  cart: cartData?.data?.cart || null,
-  addService: addServiceData
+  serviceAdded:
+    !!addServiceData?.data?.cartAddSelectedBookableItem,
+  availableDates:
+    datesData?.data?.cartBookableDates || null,
+  boulevardErrors:
+    datesData?.errors || null
 });
   } catch (error) {
     return res.status(500).json({
