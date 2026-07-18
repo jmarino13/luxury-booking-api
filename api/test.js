@@ -10,19 +10,16 @@ const credentials = Buffer
 
 
 const query = `
-query {
-  business(id:"3a83c246-a294-4eee-9a1a-a960ade6528a") {
-    cartBookableItems(
-      locationId:"c4d9bb0-b959-4898-8444-23d32a1f994e"
-      first:50
-    ) {
-      edges {
-        node {
-          id
-          name
-        }
-      }
+mutation {
+  createCart(input:{
+    clientInformation:{
+      firstName:"Test"
+      lastName:"User"
+      email:"test@example.com"
+      phoneNumber:"5555555555"
     }
+  }) {
+    id
   }
 }
 `;
