@@ -61,22 +61,22 @@ export default async function handler(req, res) {
     }
 
     // STEP 2: Use the token to retrieve available services.
-    const cartQuery = `
-      query GetCart($id: ID!) {
-        cart(id: $id) {
+const cartQuery = `
+  query GetCart($idOrToken: ID!) {
+    cart(idOrToken: $idOrToken) {
+      id
+
+      availableCategories {
+        name
+
+        availableItems {
           id
-
-          availableCategories {
-            name
-
-            availableItems {
-              id
-              name
-            }
-          }
+          name
         }
       }
-    `;
+    }
+  }
+`;
 
     const cartResponse = await fetch(endpoint, {
       method: "POST",
