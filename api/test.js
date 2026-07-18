@@ -11,33 +11,10 @@ const credentials = Buffer
 
 const query = `
 query {
-  createCart: __type(name:"CreateCartInput") {
-    name
-    inputFields {
+  business {
+    locations {
+      id
       name
-      type {
-        kind
-        name
-        ofType {
-          kind
-          name
-        }
-      }
-    }
-  }
-
-  addBookable: __type(name:"CartAddSelectedBookableItemInput") {
-    name
-    inputFields {
-      name
-      type {
-        kind
-        name
-        ofType {
-          kind
-          name
-        }
-      }
     }
   }
 }
