@@ -32,7 +32,7 @@ const BUSINESS_ID =
 
 
 const response = await fetch(
-`https://api.joinblvd.com/api/2020-01/${BUSINESS_ID}/client`
+`https://api.joinblvd.com/api/2020-01/${BUSINESS_ID}/client`,
 {
 method:"POST",
 headers:{
