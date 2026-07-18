@@ -9,21 +9,22 @@ const credentials = Buffer
 .toString("base64");
 
 
-const query = `
 query {
-  business {
+  business(id:"3a83c246-a294-4eee-9a1a-a960ade6528a") {
     locations {
       edges {
         node {
           id
           name
-          tz
+          address {
+            street
+            city
+          }
         }
       }
     }
   }
 }
-`;
 
 
 const response = await fetch(
