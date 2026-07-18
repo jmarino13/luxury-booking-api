@@ -17,6 +17,14 @@ query {
         node {
           id
           name
+          bookableItems(first:50) {
+            edges {
+              node {
+                id
+                name
+              }
+            }
+          }
         }
       }
     }
