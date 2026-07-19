@@ -234,6 +234,7 @@ const timesData = await timesResponse.json();
 
 return res.status(200).json({
   cartToken,
+  cartId: cartData?.data?.cart?.id,
   serviceId,
   serviceAdded:
     !!addServiceData?.data?.cartAddSelectedBookableItem,
