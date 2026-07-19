@@ -30,7 +30,11 @@ export default async function handler(req, res) {
       firstName,
       lastName,
       email,
-      phoneNumber
+      phoneNumber,
+      referralSource,
+      utmSource,
+      utmMedium,
+      utmCampaign
     } = req.body || {};
 
     if (
@@ -56,6 +60,41 @@ export default async function handler(req, res) {
       });
     }
 
+    /*
+     * Build the referral note that will be stored in Boulevard.
+     * These fields are optional, so regular website bookings will
+     * continue working even when no referral information is present.
+     */
+    const referralDetails = [];
+
+    if (referralSource) {
+      const formattedReferralSource =
+        referralSource === "jesse-metcalfe"
+          ? "Jesse Metcalfe"
+          : referralSource;
+
+      referralDetails.push(
+        `Referral Source: ${formattedReferralSource}`
+      );
+    }
+
+    if (utmSource) {
+      referralDetails.push(`UTM Source: ${utmSource}`);
+    }
+
+    if (utmMedium) {
+      referralDetails.push(`UTM Medium: ${utmMedium}`);
+    }
+
+    if (utmCampaign) {
+      referralDetails.push(`UTM Campaign: ${utmCampaign}`);
+    }
+
+    const clientMessage =
+      referralDetails.length > 0
+        ? referralDetails.join("\n")
+        : undefined;
+
     const endpoint = "https://www.joinblvd.com/b/.api/graph";
 
     const headers = {
@@ -64,7 +103,7 @@ export default async function handler(req, res) {
       "x-blvd-bid": businessId
     };
 
-    // STEP 1: Add patient information to the cart.
+    // STEP 1: Add patient information and referral details to the cart.
     const updateCartQuery = `
       mutation UpdateCart($cart: UpdateCartInput!) {
         updateCart(cart: $cart) {
@@ -73,21 +112,27 @@ export default async function handler(req, res) {
       }
     `;
 
+    const cartUpdate = {
+      id: cartId,
+      clientInformation: {
+        firstName,
+        lastName,
+        email,
+        phoneNumber
+      }
+    };
+
+    if (clientMessage) {
+      cartUpdate.clientMessage = clientMessage;
+    }
+
     const updateResponse = await fetch(endpoint, {
       method: "POST",
       headers,
       body: JSON.stringify({
         query: updateCartQuery,
         variables: {
-          cart: {
-            id: cartId,
-            clientInformation: {
-              firstName,
-              lastName,
-              email,
-              phoneNumber
-            }
-          }
+          cart: cartUpdate
         }
       })
     });
@@ -169,6 +214,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       message: "Your appointment has been booked successfully.",
+      referralRecorded: Boolean(clientMessage),
       updateCart: updateData,
       reservation: reserveData,
       checkout: checkoutData
