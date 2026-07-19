@@ -179,10 +179,6 @@ const requestedDate =
     ? req.query.date
     : null;
 
-const requestedDate =
-  typeof req.query.date === "string"
-    ? req.query.date
-    : null;
 
 const selectedDate =
   requestedDate || availableDates?.[0]?.date;
