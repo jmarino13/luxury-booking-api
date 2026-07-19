@@ -61,17 +61,24 @@ export default async function handler(req, res) {
     }
 
     /*
-     * Build the referral note that will be stored in Boulevard.
-     * These fields are optional, so regular website bookings will
-     * continue working even when no referral information is present.
+     * Convert tracked referral codes into readable names.
+     * Add future referral partners to this list.
+     */
+    const referralNames = {
+      "jesse-metcalfe": "Jesse Metcalfe",
+      "fit-responder": "Fit Responder"
+    };
+
+    /*
+     * Build the referral note stored in Boulevard.
+     * Regular website bookings continue working when no
+     * referral or UTM information is included.
      */
     const referralDetails = [];
 
     if (referralSource) {
       const formattedReferralSource =
-        referralSource === "jesse-metcalfe"
-          ? "Jesse Metcalfe"
-          : referralSource;
+        referralNames[referralSource] || referralSource;
 
       referralDetails.push(
         `Referral Source: ${formattedReferralSource}`
@@ -103,7 +110,10 @@ export default async function handler(req, res) {
       "x-blvd-bid": businessId
     };
 
-    // STEP 1: Add patient information and referral details to the cart.
+    /*
+     * STEP 1:
+     * Add patient information and referral details to the cart.
+     */
     const updateCartQuery = `
       mutation UpdateCart($cart: UpdateCartInput!) {
         updateCart(cart: $cart) {
@@ -146,7 +156,10 @@ export default async function handler(req, res) {
       });
     }
 
-    // STEP 2: Reserve the selected appointment time.
+    /*
+     * STEP 2:
+     * Reserve the selected appointment time.
+     */
     const reserveQuery = `
       mutation ReserveTime(
         $idOrToken: ID!
@@ -182,7 +195,10 @@ export default async function handler(req, res) {
       });
     }
 
-    // STEP 3: Checkout and create the live Boulevard appointment.
+    /*
+     * STEP 3:
+     * Checkout and create the live Boulevard appointment.
+     */
     const checkoutQuery = `
       mutation CheckoutCart($idOrToken: ID!) {
         checkoutCart(idOrToken: $idOrToken) {
@@ -215,6 +231,10 @@ export default async function handler(req, res) {
       success: true,
       message: "Your appointment has been booked successfully.",
       referralRecorded: Boolean(clientMessage),
+      referralSource:
+        referralNames[referralSource] ||
+        referralSource ||
+        null,
       updateCart: updateData,
       reservation: reserveData,
       checkout: checkoutData
