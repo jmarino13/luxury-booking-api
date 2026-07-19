@@ -9,26 +9,28 @@ export default async function handler(req, res) {
       });
     }
 
-    const query = `
-      query {
-        __type(name: "RootMutationType") {
-          fields {
+const query = `
+  query {
+    updateCartInput: __type(name: "UpdateCartInput") {
+      name
+      inputFields {
+        name
+        type {
+          kind
+          name
+          ofType {
+            kind
             name
-            args {
+            ofType {
+              kind
               name
-              type {
-                kind
-                name
-                ofType {
-                  kind
-                  name
-                }
-              }
             }
           }
         }
       }
-    `;
+    }
+  }
+`;
 
     const response = await fetch(
       "https://www.joinblvd.com/b/.api/graph",
@@ -56,20 +58,11 @@ export default async function handler(req, res) {
       });
     }
 
-    const mutations =
-      data?.data?.__type?.fields?.filter((field) =>
-        [
-          "reserveCartBookableItems",
-          "checkoutCart",
-          "updateCart"
-        ].includes(field.name)
-      ) || [];
-
-    return res.status(200).json({
-      status: response.status,
-      mutations,
-      boulevardErrors: data?.errors || null
-    });
+return res.status(200).json({
+  status: response.status,
+  updateCartInput: data?.data?.updateCartInput || null,
+  boulevardErrors: data?.errors || null
+});
   } catch (error) {
     return res.status(200).json({
       error: error.message,
