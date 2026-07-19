@@ -11,7 +11,9 @@ export default async function handler(req, res) {
 
 const query = `
   query {
-    updateCartInput: __type(name: "UpdateCartInput") {
+    clientInformationInput: __type(
+      name: "CartClientInformationInput"
+    ) {
       name
       inputFields {
         name
@@ -21,10 +23,6 @@ const query = `
           ofType {
             kind
             name
-            ofType {
-              kind
-              name
-            }
           }
         }
       }
@@ -60,7 +58,8 @@ const query = `
 
 return res.status(200).json({
   status: response.status,
-  updateCartInput: data?.data?.updateCartInput || null,
+  clientInformationInput:
+    data?.data?.clientInformationInput || null,
   boulevardErrors: data?.errors || null
 });
   } catch (error) {
