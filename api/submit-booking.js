@@ -1,0 +1,183 @@
+export default async function handler(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  if (req.method !== "POST") {
+    return res.status(405).json({
+      error: "This endpoint only accepts POST requests."
+    });
+  }
+
+  try {
+    const apiKey = process.env.BOULEVARD_API_KEY?.trim();
+    const businessId = "3a83c246-a294-4eee-9a1a-a960ade6528a";
+
+    if (!apiKey) {
+      return res.status(500).json({
+        error: "BOULEVARD_API_KEY is missing."
+      });
+    }
+
+    const {
+      cartId,
+      cartToken,
+      bookableTimeId,
+      firstName,
+      lastName,
+      email,
+      phoneNumber
+    } = req.body || {};
+
+    if (
+      !cartId ||
+      !cartToken ||
+      !bookableTimeId ||
+      !firstName ||
+      !lastName ||
+      !email ||
+      !phoneNumber
+    ) {
+      return res.status(400).json({
+        error: "Missing required booking information.",
+        required: [
+          "cartId",
+          "cartToken",
+          "bookableTimeId",
+          "firstName",
+          "lastName",
+          "email",
+          "phoneNumber"
+        ]
+      });
+    }
+
+    const endpoint = "https://www.joinblvd.com/b/.api/graph";
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+      "x-blvd-bid": businessId
+    };
+
+    // STEP 1: Add patient information to the cart.
+    const updateCartQuery = `
+      mutation UpdateCart($cart: UpdateCartInput!) {
+        updateCart(cart: $cart) {
+          __typename
+        }
+      }
+    `;
+
+    const updateResponse = await fetch(endpoint, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        query: updateCartQuery,
+        variables: {
+          cart: {
+            id: cartId,
+            clientInformation: {
+              firstName,
+              lastName,
+              email,
+              phoneNumber
+            }
+          }
+        }
+      })
+    });
+
+    const updateData = await updateResponse.json();
+
+    if (updateData?.errors?.length) {
+      return res.status(400).json({
+        step: "updateCart",
+        errors: updateData.errors
+      });
+    }
+
+    // STEP 2: Reserve the selected appointment time.
+    const reserveQuery = `
+      mutation ReserveTime(
+        $idOrToken: ID!
+        $bookableTimeId: ID!
+      ) {
+        reserveCartBookableItems(
+          idOrToken: $idOrToken
+          bookableTimeId: $bookableTimeId
+        ) {
+          __typename
+        }
+      }
+    `;
+
+    const reserveResponse = await fetch(endpoint, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        query: reserveQuery,
+        variables: {
+          idOrToken: cartToken,
+          bookableTimeId
+        }
+      })
+    });
+
+    const reserveData = await reserveResponse.json();
+
+    if (reserveData?.errors?.length) {
+      return res.status(400).json({
+        step: "reserveCartBookableItems",
+        errors: reserveData.errors
+      });
+    }
+
+    // STEP 3: Checkout and create the live Boulevard appointment.
+    const checkoutQuery = `
+      mutation CheckoutCart($idOrToken: ID!) {
+        checkoutCart(idOrToken: $idOrToken) {
+          __typename
+        }
+      }
+    `;
+
+    const checkoutResponse = await fetch(endpoint, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        query: checkoutQuery,
+        variables: {
+          idOrToken: cartToken
+        }
+      })
+    });
+
+    const checkoutData = await checkoutResponse.json();
+
+    if (checkoutData?.errors?.length) {
+      return res.status(400).json({
+        step: "checkoutCart",
+        errors: checkoutData.errors
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Your appointment has been booked successfully.",
+      updateCart: updateData,
+      reservation: reserveData,
+      checkout: checkoutData
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+      cause: error.cause?.message || null
+    });
+  }
+}
